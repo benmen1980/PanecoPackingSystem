@@ -24,7 +24,7 @@ jQuery(document).ready(function(){
 		jQuery('.item-table-wrapper').hide();
 
 		var basket_num = jQuery(this).val();
-		/*var Request_URL = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$filter=ROYY_TRANSPORTMEAN eq '"+basket_num+"' &$expand=AINVOICEITEMS_SUBFORM($select=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$select=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
+		var Request_URL = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$filter=ROYY_TRANSPORTMEAN eq '"+basket_num+"' &$expand=AINVOICEITEMS_SUBFORM($select=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$select=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
 
 		jQuery.ajax({
 			
@@ -41,7 +41,7 @@ jQuery(document).ready(function(){
             	console.log(jqXHR.status);
        		}
    		
-		});*/
+		});
 
 	});
 
