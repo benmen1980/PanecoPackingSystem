@@ -30,9 +30,10 @@ jQuery(document).ready(function(){
 			
 			url: Request_URL,
 			type: 'GET',
-			beforeSend: function (jqXHR, settings) {
-        		jqXHR.setRequestHeader('auth', 'Basic ' + btoa('API:12345678'));
-    		},
+			beforeSend: function (xhr) {
+    			xhr.setRequestHeader ("Authorization", "Basic " + btoa("API:12345678"));
+			},
+			headers: {'X-App-Id':'APP006', 'X-App-Key':'F40FFA79343C446A9931BA1177716F04'}, 
 			dataType: "jsonp",
 			success: function(resp){
 				console.log(resp);
