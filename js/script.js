@@ -24,15 +24,12 @@ jQuery(document).ready(function(){
 		jQuery('.item-table-wrapper').hide();
 
 		var basket_num = jQuery(this).val();
-		var Request_URL = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$filter=ROYY_TRANSPORTMEAN eq '"+basket_num+"' &$expand=AINVOICEITEMS_SUBFORM($select=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$select=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
+		/*var Request_URL = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$filter=ROYY_TRANSPORTMEAN eq '"+basket_num+"' &$expand=AINVOICEITEMS_SUBFORM($select=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$select=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
 
 		jQuery.ajax({
 			
 			url: Request_URL,
 			type: 'GET',
-			/*beforeSend: function (xhr) {
-    			xhr.setRequestHeader ("Authorization", "Basic " + btoa("API:12345678"));
-			},*/
 			headers: {	
 						'Authorization': 'Basic ' + btoa("API:12345678") + '',
 						'X-App-Id':'APP006', 
@@ -47,7 +44,7 @@ jQuery(document).ready(function(){
        		}
    		
 		});
-
+		*/
 	});
 
 	jQuery('.scanitem').on('focus', function(){
