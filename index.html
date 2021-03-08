@@ -10,29 +10,29 @@
 <script src="js/script.js"></script>
 </head>
 <body id="packing-system-template" class="packing-system-template">
-  	<div class="container">
+    <div class="container">
       <div class="box-layout">
-    		<header class="template-header">
-    			<div class="row top-header">
-    				<div class="col-md-6 logo">
-    					<h2>Packing system</h2>
-    				</div>
-    				<div class="col-md-6 social-icons">
-    					<ul class="icon-list">
-    						<li class="circle">
-    							<span>P</span>
-    						</li>
-    						<li class="circle">
-    							<span>P</span>
-    						</li>
-    						<li class="circle">
-    							<span>P</span>
-    						</li>
-    					</ul>
-    				</div>
-    			</div>
-    			<div class="row bottom-header">
-    				<div class="col-md-12">
+        <header class="template-header">
+          <div class="row top-header">
+            <div class="col-md-6 logo">
+              <h2>Packing system</h2>
+            </div>
+            <div class="col-md-6 social-icons">
+              <ul class="icon-list">
+                <li class="circle">
+                  <span>P</span>
+                </li>
+                <li class="circle">
+                  <span>P</span>
+                </li>
+                <li class="circle">
+                  <span>P</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="row bottom-header">
+            <div class="col-md-12">
               <div class="dropdown-option">
                 <ul class="user-nav" style="display: none">
                   <li class="logged_user">
@@ -43,15 +43,15 @@
                   </li>
                 </ul>
                 <div class="right-select">
-        					<select name="pallet_no" class="pallet_no common-select">
-        						<option>Pallet No.</option>
-        						<option value="1234">1234</option>
-        						<option value="2345">2345</option>
-        						<option value="3456">3456</option>
-        						<option value="4567">4567</option>
-        						<option value="5678">5678</option>
-        						<option value="6789">6789</option>
-        					</select>
+                  <select name="pallet_no" class="pallet_no common-select">
+                    <option>Pallet No.</option>
+                    <option value="1234">1234</option>
+                    <option value="2345">2345</option>
+                    <option value="3456">3456</option>
+                    <option value="4567">4567</option>
+                    <option value="5678">5678</option>
+                    <option value="6789">6789</option>
+                  </select>
                   <select name="distribution_no" class="distribution_no common-select">
                     <option>Distribution Number</option>
                     <option value="1234">1234</option>
@@ -61,29 +61,29 @@
                     <option value="5678">5678</option>
                     <option value="6789">6789</option>
                   </select>
-        				</div>
+                </div>
               </div>
             </div>
-    			</div>
-    		</header>
-    		<div class="main" id="main">
-    			<div class="user_login_area">
-  						<div class="user_login_form">
-  							<form class="loginform" method="post">
-  								<div class="form-group">
-  									<input type="text" name="username" class="username form-control" placeholder="Username">
-  								</div>
-  								<div class="form-group">
-  									<input type="password" name="password" class="password form-control" placeholder="*****">
-  								</div>
-  								<div class="form-group form_submit mb-0">
+          </div>
+        </header>
+        <div class="main" id="main">
+          <div class="user_login_area">
+              <div class="user_login_form">
+                <form class="loginform" method="post">
+                  <div class="form-group">
+                    <input type="text" name="username" class="username form-control" placeholder="Username">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password" class="password form-control" placeholder="*****">
+                  </div>
+                  <div class="form-group form_submit mb-0">
                     <button type="submit" name="login_submit" class="btn btn-primary login_submit">Login</button>
-  								</div>
-  							</form>
+                  </div>
+                </form>
                 <div class="form-response"></div>
-  						</div>
-    			 </div>
-    			
+              </div>
+           </div>
+          
             <div class="product_table_area">
               <div class="catalog_area">
                 <div class="scanning_section">
@@ -95,7 +95,7 @@
                       <input type="text" name="scanitem" class="scanitem form-control" placeholder="Scan Item">
                     </div>
                     <div class="col-md-12 error-field form-group ">
-                      <div class="alert alert-primary" role="alert">
+                      <div class="alert alert-primary" role="alert" style="display: none;">
                         This is a danger alert—check it out!
                       </div>
                     </div>
@@ -112,9 +112,8 @@
               </div>
                <div class="product_table">
                   <div class="table-responsive item-table-wrapper" style="display: none">
-                    <table class="table table-hover">
+                    <table class="table table-hover table-items">
                       <tr>
-                        <th>מספר חבילות</th>
                         <th>נסרק</th>
                         <th>כמות</th>
                         <th>תאור</th>
@@ -174,8 +173,8 @@
                  </div>
              </div>
           </div>
-    		</div>
-    	</div>
+        </div>
+      </div>
     </div>
  </body>
 </html>
