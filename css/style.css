@@ -290,3 +290,7 @@ border-left: 1px solid #999;height: 100%;width: 1px;left: 0;}
         max-width: 960px;
     }
 }
+
+.item-table-wrapper.show-table{
+    display: block !important;
+}

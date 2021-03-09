@@ -34,7 +34,7 @@ function fetchBasket($number) {
 
 	$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$" . $filter . "=ROYY_TRANSPORTMEAN eq '" . $number . "' &$" . $expand . "=AINVOICEITEMS_SUBFORM($" . $select . "=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$" . $select . "=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
 	$url = str_replace(" ", '%20', $url);
-
+	//$url = urlencode($url);
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 		"Authorization: Basic $auth",
@@ -55,7 +55,7 @@ function fetchBasket($number) {
 	if (!empty($results->value)) {
 
 		$counter = 1;
-		$html = '<tr>
+		$html = '<tbody><tr>
 	                 <th>נסרק</th>
 	                  <th>כמות</th>
 	                   <th>תאור</th>
@@ -71,10 +71,10 @@ function fetchBasket($number) {
 				$html .= '<tr class="item_row" data-id="' . $counter . '">';
 				$html .= ' <td class="qtybox">
 	                            <div class="number-input md-number-input">
-	                              <input class="quantity" min="0" name="quantity" value="1" type="number">
+	                              <input class="quantity" min="0" name="quantity" value="' . $qty . '" type="number">
 	                              <div class="qty-btn">
-	                                <button onclick="this.parentNode.parentNode.querySelector("input[type=number]").stepUp()" class="minus qtybox-btn"><i class="fa fa-sort-asc" aria-hidden="true"></i></button>
-	                                 <button onclick="this.parentNode.parentNode.querySelector("input[type=number]").stepDown()" class="plus qtybox-btn"><i class="fa fa-caret-down" aria-hidden="true"></i></button>
+	                                <button class="plus qtybox-btn"><i class="fa fa-sort-asc" aria-hidden="true"></i></button>
+                                    <button class="minus qtybox-btn"><i class="fa fa-caret-down" aria-hidden="true"></i></button>
 	                              </div>
 	                            </div>
 	                        </td>';
@@ -86,7 +86,7 @@ function fetchBasket($number) {
 				$counter++;
 			}
 		}
-
+		$html .= '</tbody>';
 		$response['status'] = 1;
 		$response['content'] = $html;
 
@@ -105,9 +105,11 @@ function fetchPalletNumber($date) {
 	$auth = base64_encode("API:12345678");
 	$filter = "filter";
 	$select = "select";
+	$date = urlencode(date(DATE_ATOM, strtotime($date)));
 
-	$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/QAMR_PALLET2?$filter=CURDATE ge " . $date . "&$select=PALLETNUM,STCODE,STDES";
+	$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/QAMR_PALLET2?$" . $filter . "=CURDATE ge " . $date . "&$" . $select . "=PALLETNUM,STCODE,STDES";
 	$url = str_replace(" ", '%20', $url);
+	//echo $url;
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(

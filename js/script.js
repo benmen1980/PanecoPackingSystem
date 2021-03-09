@@ -6,53 +6,83 @@ jQuery(document).ready(function(){
 		jQuery(".form-response").html('');
 	});
 
-	jQuery(".qtybox-btn").click(function(){
+	/*jQuery(".qtybox-btn").click(function(){
 		var qty = jQuery(this).parents(".number-input").find('.quantity').val();
 		jQuery(this).parents(".item_row").find(".totalqty").text(qty);
-	});
+	});*/
 
-	jQuery(".item_row").click(function(){
+	/*jQuery(".item_row").click(function(){
 		jQuery(this).toggleClass('active');
 		jQuery(this).siblings().removeClass('active');
+	});*/
+
+	/*jQuery('.scanbasket').on('focus', function(){
+		jQuery('.item-table-wrapper').show();
+	});*/
+
+	/*jQuery('.scanitem').on('focusout', function(){
+		jQuery('.item-table-wrapper').hide();
+	});*/
+
+	jQuery('body').on('click','.qtybox-btn',function(){
+		var qty = jQuery(this).parents(".number-input").find('.quantity').val();
+		var new_qty = 0;
+
+		if(jQuery(this).hasClass('plus')){
+			new_qty = parseInt(qty) + 1;
+		} else {
+			new_qty = parseInt(qty) - 1;
+			if(new_qty < 0) {
+				new_qty = 0;
+			}
+		}	
+
+		jQuery(this).parents(".number-input").find('.quantity').val(new_qty);
+		jQuery(this).parents(".item_row").find(".totalqty").text(new_qty); 
 	});
 
-	jQuery('.scanbasket').on('focus', function(){
-		jQuery('.item-table-wrapper').show();
+	jQuery('.table-items').on('click','.item_row',function(){
+		jQuery(this).toggleClass('active');
+		jQuery(this).siblings().removeClass('active'); 
 	});
 
 	jQuery('.scanbasket').on('focusout', function(){
-		//jQuery('.item-table-wrapper').hide();
 
 		var basket_num = jQuery(this).val();
-
-		jQuery.ajax({
-			
-			url: 'api.php',
-			type: 'POST',
-			data: {
-				'action': 'fetchbasket',
-				'basket_number' : basket_num
-			},
-			success: function(resp){
-				
-				obj = jQuery.parseJSON(resp);
-
-				if(obj.status == 1) {
-					jQuery('.table-items').html(obj.content);
-					jQuery('.table-items').show();
-					jQuery('.alert').hide();
-				} else {
-					jQuery('.alert').html('No data found!');
-					jQuery('.alert').show();
-					jQuery('.table-items').hide();
-				}
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-            	console.log(jqXHR.status);
-       		}
-   		
-		});
 		
+		if(basket_num) {
+
+			jQuery(".scanitem").parents('.form-group').show();
+
+			jQuery.ajax({
+				
+				url: 'api.php',
+				type: 'POST',
+				data: {
+					'action': 'fetchbasket',
+					'basket_number' : basket_num
+				},
+				success: function(resp){
+					
+					obj = jQuery.parseJSON(resp);
+
+					if(obj.status == 1) {
+						jQuery('.table-items').html(obj.content);
+						jQuery('.item-table-wrapper').addClass('show-table');
+						jQuery('.alert').hide();
+					} else {
+						jQuery('.alert').html('No data found!');
+						jQuery('.alert').show();
+						jQuery('.item-table-wrapper').removeClass('show-table');
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+	            	console.log(jqXHR.status);
+	       		}
+	   		
+			});
+
+		} 
 
 		/*var xhr = new XMLHttpRequest();
 		xhr.withCredentials = true;
@@ -71,7 +101,7 @@ jQuery(document).ready(function(){
 		
 	});
 
-	jQuery('.scanitem').on('focus', function(){
+	jQuery('.scanitem').on('focusout', function(){
 		var item_val = jQuery(this).val();
 		item_val = item_val.toUpperCase();
 		
@@ -79,22 +109,27 @@ jQuery(document).ready(function(){
 			var td_val = jQuery(this).find('.itemsku').text();
 
 			if(td_val == item_val) {
+
 				var current_qty = parseInt(jQuery(this).find('.quantity').val());
 				var new_qty = current_qty + 1;
+
+				/*jQuery(this).parents('.item-table-wrapper').addClass('show-table');
+				jQuery(this).parents('.main').find('.alert').hide();*/
 
 				jQuery(this).addClass('active');
 				jQuery(this).siblings().removeClass('active');
 				jQuery(this).find('.quantity').val(new_qty);
 				jQuery(this).find('.totalqty').text(new_qty);
 
-			}
+
+			} /*else {
+
+				jQuery('.item-table-wrapper').removeClass('show-table');
+				jQuery('.alert').html('No data found!');
+			    jQuery('.alert').show();
+			}*/
 		});
 
-		jQuery('.item-table-wrapper').show();
-	});
-
-	jQuery('.scanitem').on('focusout', function(){
-		jQuery('.item-table-wrapper').hide();
 	});
 
 	jQuery(".btn-complete").click(function(){
