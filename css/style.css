@@ -168,6 +168,9 @@ header.template-header {
 
     padding: 7px 15px;
 }
+.item-table-wrapper.show-table{
+    display: block !important;
+}
 .form-response{margin-top: 15px;}
 .input-error{border: 1px solid red !important;}
 /*Quantity buttom */
@@ -275,7 +278,7 @@ position: absolute;
 display: inline-block;
 border-left: 1px solid #999;height: 100%;width: 1px;left: 0;}
 
-.qtybox .qty-btn button.minus {
+.qtybox .qty-btn button.plus {
     padding-top: 2px;
     border-bottom: 1px solid #999;
 }
@@ -289,8 +292,4 @@ border-left: 1px solid #999;height: 100%;width: 1px;left: 0;}
     .container {
         max-width: 960px;
     }
-}
-
-.item-table-wrapper.show-table{
-    display: block !important;
 }

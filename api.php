@@ -80,7 +80,7 @@ function fetchBasket($number) {
 	                        </td>';
 				$html .= '<td class="totalqty">' . $qty . '</td>';
 				$html .= '<td class="itemdesc">' . $des . '</td>';
-				$html .= '<td class="itemsku">' . $sku . '</td>';
+				$html .= '<td class="itemsku" data-sku="' . $sku . '">' . $sku . '</td>';
 				$html .= '</tr>';
 
 				$counter++;
