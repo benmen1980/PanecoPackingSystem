@@ -53,7 +53,8 @@ jQuery(document).ready(function(){
 	jQuery('.scanbasket').on('focusout', function(){
 
 		var basket_num = jQuery(this).val();
-		
+		var $this = jQuery(this);
+
 		if(basket_num) {
 
 			jQuery(".scanitem").parents('.form-group').show();
@@ -74,6 +75,7 @@ jQuery(document).ready(function(){
 						jQuery('.table-items').html(obj.content);
 						jQuery('.item-table-wrapper').addClass('show-table');
 						jQuery('.alert').hide();
+						$this.hide();
 					} else {
 						jQuery('.alert').html('No data found!');
 						jQuery('.alert').show();
@@ -90,12 +92,58 @@ jQuery(document).ready(function(){
 		
 	});
 
+	jQuery('.scanbasket').keypress(function(event){
+
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+	    var $this = jQuery(this);
+
+	    if(keycode == '13'){
+
+	       var basket_num = jQuery(this).val();
+		
+			if(basket_num) {
+
+				jQuery(".scanitem").parents('.form-group').show();
+
+				jQuery.ajax({
+					
+					url: 'api.php',
+					type: 'POST',
+					data: {
+						'action': 'fetchbasket',
+						'basket_number' : basket_num
+					},
+					success: function(resp){
+						
+						var obj = jQuery.parseJSON(resp);
+
+						if(obj.status == 1) {
+							jQuery('.table-items').html(obj.content);
+							jQuery('.item-table-wrapper').addClass('show-table');
+							jQuery('.alert').hide();
+							$this.hide();
+						} else {
+							jQuery('.alert').html('No data found!');
+							jQuery('.alert').show();
+							jQuery('.item-table-wrapper').removeClass('show-table');
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+		            	console.log(jqXHR.status);
+		       		}
+		   		
+				});
+
+			} 
+	    }
+	});
+
+
 	jQuery('.scanitem').on('focusout', function(){
 
 		var items = [];
 		var item_val = jQuery(this).val();
-
-		//item_val = item_val.toUpperCase();
+		var $this = jQuery(this);
 		
 		jQuery('.table-items .item_row').each(function(){
 			
@@ -114,6 +162,8 @@ jQuery(document).ready(function(){
 
 				jQuery('.item-table-wrapper').addClass('show-table');
 				jQuery('.alert').hide();
+
+				$this.val('');
 			} 
 		});
 
@@ -124,6 +174,47 @@ jQuery(document).ready(function(){
 		}
 
 	});
+
+	jQuery('.scanitem').keypress(function(event){
+
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+
+	    if(keycode == '13'){
+
+	        var items = [];
+			var item_val = jQuery(this).val();
+			var $this = jQuery(this);
+			
+			jQuery('.table-items .item_row').each(function(){
+				
+				var td_val = jQuery(this).find('.itemsku').attr('data-sku');
+				items.push(td_val);
+
+				if(jQuery.trim(item_val) == jQuery.trim(td_val)) {
+
+					var current_qty = parseInt(jQuery(this).find('.quantity').val());
+					var new_qty = current_qty + 1;
+
+					jQuery(this).addClass('active');
+					jQuery(this).siblings().removeClass('active');
+					jQuery(this).find('.quantity').val(new_qty);
+					jQuery(this).find('.totalqty').text(new_qty);
+
+					jQuery('.item-table-wrapper').addClass('show-table');
+					jQuery('.alert').hide();
+
+					$this.val('');
+				} 
+			});
+
+			if(jQuery.inArray(item_val, items) === -1){
+				jQuery('.item-table-wrapper').removeClass('show-table');
+				jQuery('.alert').html('No data found!');
+			    jQuery('.alert').show();
+			}
+	    }
+	});
+
 
 	jQuery(".btn-complete").click(function(){
 		jQuery('.item-table-wrapper').hide();

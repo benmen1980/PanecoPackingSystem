@@ -55,18 +55,22 @@ function fetchBasket($number) {
 	if (!empty($results->value)) {
 
 		$counter = 1;
-		$html = '<tbody><tr>
-	                 <th>נסרק</th>
-	                  <th>כמות</th>
-	                   <th>תאור</th>
+		$html = '<tbody>
+					<tr>
+	                 	<th>נסרק</th>
+	                  	<th>כמות</th>
+	                   	<th>תאור</th>
 	                    <th>מקט</th>
+	                    <th>KLINE</th>
 	              </tr>';
 
 		foreach ($results->value as $data) {
 			foreach ($data->AINVOICEITEMS_SUBFORM as $item) {
+
 				$qty = $item->TQUANT;
 				$des = $item->PDES;
 				$sku = $item->PARTNAME;
+				$kline = $item->KLINE;
 
 				$html .= '<tr class="item_row" data-id="' . $counter . '">';
 				$html .= ' <td class="qtybox">
@@ -81,11 +85,13 @@ function fetchBasket($number) {
 				$html .= '<td class="totalqty">' . $qty . '</td>';
 				$html .= '<td class="itemdesc">' . $des . '</td>';
 				$html .= '<td class="itemsku" data-sku="' . $sku . '">' . $sku . '</td>';
+				$html .= '<td class="kline">' . $kline . '</td>';
 				$html .= '</tr>';
 
 				$counter++;
 			}
 		}
+
 		$html .= '</tbody>';
 		$response['status'] = 1;
 		$response['content'] = $html;
