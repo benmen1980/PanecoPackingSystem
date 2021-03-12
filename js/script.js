@@ -72,11 +72,19 @@ jQuery(document).ready(function(){
 					var obj = jQuery.parseJSON(resp);
 
 					if(obj.status == 1) {
+
 						jQuery('.table-items').html(obj.content);
 						jQuery('.item-table-wrapper').addClass('show-table');
 						jQuery('.alert').hide();
 						$this.hide();
+
+						if(obj.ivnum != ''){
+							var hidden_field = '<input type="hidden" name="ivnum" class="ivnum" value="'+obj.ivnum +'">';
+							jQuery(hidden_field).insertAfter('.table-items');
+						}
+
 					} else {
+						
 						jQuery('.alert').html('No data found!');
 						jQuery('.alert').show();
 						jQuery('.item-table-wrapper').removeClass('show-table');
@@ -118,11 +126,19 @@ jQuery(document).ready(function(){
 						var obj = jQuery.parseJSON(resp);
 
 						if(obj.status == 1) {
+
 							jQuery('.table-items').html(obj.content);
 							jQuery('.item-table-wrapper').addClass('show-table');
 							jQuery('.alert').hide();
 							$this.hide();
+
+							if(obj.ivnum != ''){
+								var hidden_field = '<input type="hidden" name="ivnum" class="ivnum" value="'+obj.ivnum +'">';
+								jQuery(hidden_field).insertAfter('.table-items');
+							}
+
 						} else {
+
 							jQuery('.alert').html('No data found!');
 							jQuery('.alert').show();
 							jQuery('.item-table-wrapper').removeClass('show-table');
@@ -274,5 +290,48 @@ jQuery(document).ready(function(){
 		jQuery('.item-table-wrapper').hide();
 	});*/
 
+
+	jQuery(".btn-complete").click(function(e){
+		e.preventDefault();
+
+		var ItemArray = [];
+		var IVnum = jQuery('.ivnum').val();	
+
+		jQuery('.table-items .item_row').each(function(){
+			var current_Qty = jQuery(this).find('.quantity').val();
+			var kLine = jQuery(this).find('.kline').text();
+			ItemArray[kLine] = current_Qty;
+		});	
+
+		jQuery.ajax({
+		
+			url: 'api.php',
+			type: 'POST',
+			data: {
+				'action': 'patchitemtable',
+				'IVNUM' : IVnum,
+				'Items': ItemArray
+			},
+			success: function(resp){
+				var obj = jQuery.parseJSON(resp);
+
+				if(obj.status == true){
+					jQuery('.item-table-wrapper').removeClass('show-table');
+					jQuery('.alert').html('The data are successfully updated');
+			    	jQuery('.alert').show();
+
+				} else {
+					jQuery('.item-table-wrapper').removeClass('show-table');
+					jQuery('.alert').html('Error while updating the data');
+			    	jQuery('.alert').show();
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+	        	console.log(jqXHR.status);
+	   		}
+		
+		});
+
+	});
 
 });

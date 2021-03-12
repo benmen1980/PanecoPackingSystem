@@ -19,6 +19,9 @@ if (isset($_POST['action']) && $_POST['action'] != '') {
 	case 'fetchpallet':fetchPalletNumber($date);
 		break;
 
+	case 'patchitemtable':patchItemTable();
+		break;
+
 	default:'other';
 		break;
 	}
@@ -55,6 +58,8 @@ function fetchBasket($number) {
 	if (!empty($results->value)) {
 
 		$counter = 1;
+		$IV_num = '';
+
 		$html = '<tbody>
 					<tr>
 	                 	<th>נסרק</th>
@@ -65,6 +70,8 @@ function fetchBasket($number) {
 	              </tr>';
 
 		foreach ($results->value as $data) {
+			$IV_num .= $data->IVNUM;
+
 			foreach ($data->AINVOICEITEMS_SUBFORM as $item) {
 
 				$qty = $item->TQUANT;
@@ -91,9 +98,10 @@ function fetchBasket($number) {
 				$counter++;
 			}
 		}
-
+		//die;
 		$html .= '</tbody>';
 		$response['status'] = 1;
+		$response['ivnum'] = $IV_num;
 		$response['content'] = $html;
 
 	} else {
@@ -148,6 +156,52 @@ function fetchPalletNumber($date) {
 
 	} else {
 		$response['status'] = 0;
+	}
+
+	echo json_encode($response);
+	die;
+}
+
+function patchItemTable() {
+
+	$data = array();
+	$IVNUM = $_POST['IVNUM'];
+	$items = array_filter($_POST['Items']);
+	$auth = base64_encode("API:12345678");
+
+	foreach ($items as $kline => $qty) {
+
+		$data['CARTONNUM'] = $qty;
+
+		$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES(IVNUM='T6284',IVTYPE='A',DEBIT='D')/AINVOICEITEMS_SUBFORM($kline)";
+		$url = str_replace(" ", '%20', $url);
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			"Authorization: Basic $auth",
+			"X-App-Id: APP006",
+			"X-App-Key: F40FFA79343C446A9931BA1177716F04",
+			//"Accept: application/json",
+			"Content-Type: application/json",
+		));
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		$output = curl_exec($ch);
+		$status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+		//$results = json_decode($output);
+
+		if ($status_code == '200') {
+
+			$response = array('status' => true);
+		} else {
+			$response = array('status' => false);
+		}
+
 	}
 
 	echo json_encode($response);
