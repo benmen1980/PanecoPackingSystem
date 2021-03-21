@@ -66,7 +66,7 @@ function fetchBasket($number) {
 	                  	<th>כמות</th>
 	                   	<th>תאור</th>
 	                    <th>מקט</th>
-	                    <th>KLINE</th>
+	                    <th>שורה</th>
 	              </tr>';
 
 		foreach ($results->value as $data) {
