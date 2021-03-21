@@ -6,53 +6,168 @@ jQuery(document).ready(function(){
 		jQuery(".form-response").html('');
 	});
 
-	jQuery(".qtybox-btn").click(function(){
+	jQuery('body').on('click','.qtybox-btn',function(){
 		var qty = jQuery(this).parents(".number-input").find('.quantity').val();
-		jQuery(this).parents(".item_row").find(".totalqty").text(qty);
+		var new_qty = 0;
+
+		if(jQuery(this).hasClass('plus')){
+			new_qty = parseInt(qty) + 1;
+		} else {
+			new_qty = parseInt(qty) - 1;
+			if(new_qty < 0) {
+				new_qty = 0;
+			}
+		}	
+
+		jQuery(this).parents(".number-input").find('.quantity').val(new_qty);
+		jQuery(this).parents(".item_row").find(".totalqty").text(new_qty); 
 	});
 
-	jQuery(".item_row").click(function(){
+	jQuery('.table-items').on('click','.item_row',function(){
 		jQuery(this).toggleClass('active');
-		jQuery(this).siblings().removeClass('active');
+		jQuery(this).siblings().removeClass('active'); 
 	});
+	
 
-	jQuery('.scanbasket').on('focus', function(){
-		jQuery('.item-table-wrapper').show();
+	jQuery.ajax({
+		
+		url: 'api.php',
+		type: 'POST',
+		data: {
+			'action': 'fetchpallet',
+		},
+		success: function(resp){
+			
+			var obj = jQuery.parseJSON(resp);
+
+			if(obj.status == 1) {
+				jQuery(".pallet_no").html(obj.content);
+			} 
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+        	console.log(jqXHR.status);
+   		}
+		
 	});
 
 	jQuery('.scanbasket').on('focusout', function(){
-		jQuery('.item-table-wrapper').hide();
 
 		var basket_num = jQuery(this).val();
-		/*var Request_URL = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$filter=ROYY_TRANSPORTMEAN eq '"+basket_num+"' &$expand=AINVOICEITEMS_SUBFORM($select=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$select=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
+		var $this = jQuery(this);
 
-		jQuery.ajax({
-			
-			url: Request_URL,
-			type: 'GET',
-			beforeSend: function (jqXHR, settings) {
-        		jqXHR.setRequestHeader('auth', 'Basic ' + btoa('API:12345678'));
-    		},
-			dataType: "jsonp",
-			success: function(resp){
-				console.log(resp);
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-            	console.log(jqXHR.status);
-       		}
-   		
-		});*/
+		if(basket_num) {
 
+			jQuery(".scanitem").parents('.form-group').show();
+
+			jQuery.ajax({
+				
+				url: 'api.php',
+				type: 'POST',
+				data: {
+					'action': 'fetchbasket',
+					'basket_number' : basket_num
+				},
+				success: function(resp){
+					
+					var obj = jQuery.parseJSON(resp);
+
+					if(obj.status == 1) {
+
+						jQuery('.table-items').html(obj.content);
+						jQuery('.item-table-wrapper').addClass('show-table');
+						jQuery('.alert').hide();
+						$this.hide();
+
+						if(obj.ivnum != ''){
+							var hidden_field = '<input type="hidden" name="ivnum" class="ivnum" value="'+obj.ivnum +'">';
+							jQuery(hidden_field).insertAfter('.table-items');
+						}
+
+					} else {
+						
+						jQuery('.alert').html('No data found!');
+						jQuery('.alert').show();
+						jQuery('.item-table-wrapper').removeClass('show-table');
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+	            	console.log(jqXHR.status);
+	       		}
+	   		
+			});
+
+		} 
+		
 	});
 
-	jQuery('.scanitem').on('focus', function(){
-		var item_val = jQuery(this).val();
-		item_val = item_val.toUpperCase();
-		
-		jQuery('.item-table-wrapper .item_row').each(function(){
-			var td_val = jQuery(this).find('.itemsku').text();
+	jQuery('.scanbasket').keypress(function(event){
 
-			if(td_val == item_val) {
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+	    var $this = jQuery(this);
+
+	    if(keycode == '13'){
+
+	       var basket_num = jQuery(this).val();
+		
+			if(basket_num) {
+
+				jQuery(".scanitem").parents('.form-group').show();
+
+				jQuery.ajax({
+					
+					url: 'api.php',
+					type: 'POST',
+					data: {
+						'action': 'fetchbasket',
+						'basket_number' : basket_num
+					},
+					success: function(resp){
+						
+						var obj = jQuery.parseJSON(resp);
+
+						if(obj.status == 1) {
+
+							jQuery('.table-items').html(obj.content);
+							jQuery('.item-table-wrapper').addClass('show-table');
+							jQuery('.alert').hide();
+							$this.hide();
+
+							if(obj.ivnum != ''){
+								var hidden_field = '<input type="hidden" name="ivnum" class="ivnum" value="'+obj.ivnum +'">';
+								jQuery(hidden_field).insertAfter('.table-items');
+							}
+
+						} else {
+
+							jQuery('.alert').html('No data found!');
+							jQuery('.alert').show();
+							jQuery('.item-table-wrapper').removeClass('show-table');
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+		            	console.log(jqXHR.status);
+		       		}
+		   		
+				});
+
+			} 
+	    }
+	});
+
+
+	jQuery('.scanitem').on('focusout', function(){
+
+		var items = [];
+		var item_val = jQuery(this).val();
+		var $this = jQuery(this);
+		
+		jQuery('.table-items .item_row').each(function(){
+			
+			var td_val = jQuery(this).find('.itemsku').attr('data-sku');
+			items.push(td_val);
+
+			if(jQuery.trim(item_val) == jQuery.trim(td_val)) {
+
 				var current_qty = parseInt(jQuery(this).find('.quantity').val());
 				var new_qty = current_qty + 1;
 
@@ -61,15 +176,61 @@ jQuery(document).ready(function(){
 				jQuery(this).find('.quantity').val(new_qty);
 				jQuery(this).find('.totalqty').text(new_qty);
 
-			}
+				jQuery('.item-table-wrapper').addClass('show-table');
+				jQuery('.alert').hide();
+
+				$this.val('');
+			} 
 		});
 
-		jQuery('.item-table-wrapper').show();
+		if(jQuery.inArray(item_val, items) === -1){
+			jQuery('.item-table-wrapper').removeClass('show-table');
+			jQuery('.alert').html('No data found!');
+		    jQuery('.alert').show();
+		}
+
 	});
 
-	jQuery('.scanitem').on('focusout', function(){
-		jQuery('.item-table-wrapper').hide();
+	jQuery('.scanitem').keypress(function(event){
+
+	    var keycode = (event.keyCode ? event.keyCode : event.which);
+
+	    if(keycode == '13'){
+
+	        var items = [];
+			var item_val = jQuery(this).val();
+			var $this = jQuery(this);
+			
+			jQuery('.table-items .item_row').each(function(){
+				
+				var td_val = jQuery(this).find('.itemsku').attr('data-sku');
+				items.push(td_val);
+
+				if(jQuery.trim(item_val) == jQuery.trim(td_val)) {
+
+					var current_qty = parseInt(jQuery(this).find('.quantity').val());
+					var new_qty = current_qty + 1;
+
+					jQuery(this).addClass('active');
+					jQuery(this).siblings().removeClass('active');
+					jQuery(this).find('.quantity').val(new_qty);
+					jQuery(this).find('.totalqty').text(new_qty);
+
+					jQuery('.item-table-wrapper').addClass('show-table');
+					jQuery('.alert').hide();
+
+					$this.val('');
+				} 
+			});
+
+			if(jQuery.inArray(item_val, items) === -1){
+				jQuery('.item-table-wrapper').removeClass('show-table');
+				jQuery('.alert').html('No data found!');
+			    jQuery('.alert').show();
+			}
+	    }
 	});
+
 
 	jQuery(".btn-complete").click(function(){
 		jQuery('.item-table-wrapper').hide();
@@ -109,4 +270,68 @@ jQuery(document).ready(function(){
 		}
 
 	});
+		
+
+	/*jQuery(".qtybox-btn").click(function(){
+		var qty = jQuery(this).parents(".number-input").find('.quantity').val();
+		jQuery(this).parents(".item_row").find(".totalqty").text(qty);
+	});*/
+
+	/*jQuery(".item_row").click(function(){
+		jQuery(this).toggleClass('active');
+		jQuery(this).siblings().removeClass('active');
+	});*/
+
+	/*jQuery('.scanbasket').on('focus', function(){
+		jQuery('.item-table-wrapper').show();
+	});*/
+
+	/*jQuery('.scanitem').on('focusout', function(){
+		jQuery('.item-table-wrapper').hide();
+	});*/
+
+
+	jQuery(".btn-complete").click(function(e){
+		e.preventDefault();
+
+		var ItemArray = [];
+		var IVnum = jQuery('.ivnum').val();	
+
+		jQuery('.table-items .item_row').each(function(){
+			var current_Qty = jQuery(this).find('.quantity').val();
+			var kLine = jQuery(this).find('.kline').text();
+			ItemArray[kLine] = current_Qty;
+		});	
+
+		jQuery.ajax({
+		
+			url: 'api.php',
+			type: 'POST',
+			data: {
+				'action': 'patchitemtable',
+				'IVNUM' : IVnum,
+				'Items': ItemArray
+			},
+			success: function(resp){
+				var obj = jQuery.parseJSON(resp);
+
+				if(obj.status == true){
+					jQuery('.item-table-wrapper').removeClass('show-table');
+					jQuery('.alert').html('The data are successfully updated');
+			    	jQuery('.alert').show();
+
+				} else {
+					jQuery('.item-table-wrapper').removeClass('show-table');
+					jQuery('.alert').html('Error while updating the data');
+			    	jQuery('.alert').show();
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+	        	console.log(jqXHR.status);
+	   		}
+		
+		});
+
+	});
+
 });
