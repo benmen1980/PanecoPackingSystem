@@ -35,7 +35,7 @@ function fetchBasket($number) {
 	$expand = "expand";
 	$select = "select";
 
-	$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$" . $filter . "=ROYY_TRANSPORTMEAN eq '" . $number . "' &$" . $expand . "=AINVOICEITEMS_SUBFORM($" . $select . "=KLINE,PARTNAME,PDES,TQUANT,PRICE)&$" . $select . "=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
+	$url = "https://pri.paneco.com/odata/Priority/tabula.ini/a190515/AINVOICES?$" . $filter . "=ROYY_TRANSPORTMEAN eq '" . $number . "' &$" . $expand . "=AINVOICEITEMS_SUBFORM($" . $select . "=KLINE,PARTNAME,PDES,TQUANT,PRICE,CARTONNUM)&$" . $select . "=IVNUM,CDES,IVDATE,DEBIT,IVTYPE,ROYY_TRANSPORTMEAN";
 	$url = str_replace(" ", '%20', $url);
 	//$url = urlencode($url);
 	$ch = curl_init();
@@ -79,10 +79,16 @@ function fetchBasket($number) {
 				$sku = $item->PARTNAME;
 				$kline = $item->KLINE;
 
+				if ($item->CARTONNUM == '') {
+					$qtycartnum = 0;
+				} else {
+					$qtycartnum = $item->CARTONNUM;
+				}
+
 				$html .= '<tr class="item_row" data-id="' . $counter . '">';
 				$html .= ' <td class="qtybox">
 	                            <div class="number-input md-number-input">
-	                              <input class="quantity" min="0" name="quantity" value="' . $qty . '" type="number">
+	                              <input class="quantity" min="0" name="quantity" value="' . $qtycartnum . '" type="number">
 	                              <div class="qty-btn">
 	                                <button class="plus qtybox-btn"><i class="fa fa-sort-asc" aria-hidden="true"></i></button>
                                     <button class="minus qtybox-btn"><i class="fa fa-caret-down" aria-hidden="true"></i></button>
